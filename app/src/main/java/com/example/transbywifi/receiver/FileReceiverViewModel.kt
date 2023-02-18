@@ -2,6 +2,7 @@ package com.example.transbywifi.receiver
 
 import android.app.Application
 import android.content.Context
+import android.os.Environment
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.transbywifi.Constants
@@ -12,12 +13,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.io.ObjectInputStream
+import java.io.*
 import java.net.InetSocketAddress
 import java.net.ServerSocket
+
 
 class FileReceiverViewModel(context: Application) :
     AndroidViewModel(context) {
@@ -65,7 +64,8 @@ class FileReceiverViewModel(context: Application) :
                 objectInputStream = ObjectInputStream(clientInputStream)
 
                 val fileTransfer = objectInputStream.readObject() as FileTransfer
-                val file = File(getCacheDir(context = getApplication()), fileTransfer.fileName) //创建缓存中的file对象
+
+                val file = File(getDiskCacheDir(context = getApplication()), fileTransfer.fileName) //创建缓存中的file对象
 
                 log(log = "连接成功，待接收的文件: $fileTransfer")
                 log(log = "文件将保存到: $file")
@@ -107,6 +107,17 @@ class FileReceiverViewModel(context: Application) :
 
     private suspend fun log(log: String) {
         _log.emit(value = log)
+    }
+
+    fun getDiskCacheDir(context: Context): String? {//获取缓存路径
+        var cachePath: String? = null
+        cachePath =
+            if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState() || !Environment.isExternalStorageRemovable()) {
+                context.externalCacheDir!!.path
+            } else {
+                context.cacheDir.path
+            }
+        return cachePath
     }
 
 }
