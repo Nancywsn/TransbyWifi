@@ -1,6 +1,7 @@
 package com.example.transbywifi.receiver
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
@@ -28,15 +29,17 @@ class FileReceiverActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_file_receiver)
+
         initView()
         initDevice()
         initEvent()
     }
 
 
+    @SuppressLint("SuspiciousIndentation")
     private fun initView() {
         supportActionBar?.title = "文件接收端"
-        btnCreateGroup.setOnClickListener {
+        btnCreatGroup.setOnClickListener {
             createGroup()
         }
         btnRemoveGroup.setOnClickListener {

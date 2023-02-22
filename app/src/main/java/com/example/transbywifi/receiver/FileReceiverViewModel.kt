@@ -1,7 +1,10 @@
 package com.example.transbywifi.receiver
 
+import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
+import android.os.Environment
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.transbywifi.Constants
@@ -18,6 +21,7 @@ import java.io.InputStream
 import java.io.ObjectInputStream
 import java.net.InetSocketAddress
 import java.net.ServerSocket
+
 
 class FileReceiverViewModel(context: Application) :
     AndroidViewModel(context) {
@@ -47,15 +51,16 @@ class FileReceiverViewModel(context: Application) :
             var objectInputStream: ObjectInputStream? = null
             var fileOutputStream: FileOutputStream? = null
             try {
+
                 _viewState.emit(value = ViewState.Connecting)
                 log(log = "开启 Socket")
 
                 serverSocket = ServerSocket()   //创建服务端socket
                 serverSocket.bind(InetSocketAddress(Constants.PORT))    //绑定端口号
                 serverSocket.reuseAddress = true
-                serverSocket.soTimeout = 30000  //超时设为30秒
+                serverSocket.soTimeout = 60000  //超时
 
-                log(log = "socket accept，三十秒内如果未成功则断开链接")
+                log(log = "socket accept，60秒内如果未成功则断开链接")
 
                 val client = serverSocket.accept()  //监听客户端请求
 
@@ -65,7 +70,27 @@ class FileReceiverViewModel(context: Application) :
                 objectInputStream = ObjectInputStream(clientInputStream)
 
                 val fileTransfer = objectInputStream.readObject() as FileTransfer
-                val file = File(getCacheDir(context = getApplication()), fileTransfer.fileName) //创建缓存中的file对象
+
+                val filename=fileTransfer.fileName;
+//                var tag=true
+//
+//                AlertDialog.Builder(getApplication()).apply {
+//                    setTitle("Transfer")//为这个对话框设置标题、内容
+//                    setMessage("文件：$filename")
+//                    setMessage("是否接收该文件？")
+//                    setCancelable(false)//可否使用Back键关闭对话框等属性
+//                    setPositiveButton("OK") { dialog, which ->
+//                        Toast.makeText(getApplication(), "开始接收", Toast.LENGTH_SHORT).show()
+//                    }
+//                    setNegativeButton("Cancel") { dialog, which ->
+//                        Toast.makeText(getApplication(), "拒绝接收", Toast.LENGTH_SHORT).show()
+//                        tag=false
+//                    }//为对话框设置确定按钮\取消按钮的点击事件
+//                    show()//将对话框显示
+//                }
+//                if (tag){
+
+                val file = File(getDiskCacheDir(context = getApplication()),filename) //创建缓存中的file对象
 
                 log(log = "连接成功，待接收的文件: $fileTransfer")
                 log(log = "文件将保存到: $file")
@@ -84,6 +109,7 @@ class FileReceiverViewModel(context: Application) :
                 }
                 _viewState.emit(value = ViewState.Success(file = file))
                 log(log = "文件接收成功")
+//                }
             } catch (e: Throwable) {
                 log(log = "异常: " + e.message)
                 _viewState.emit(value = ViewState.Failed(throwable = e))
@@ -99,14 +125,27 @@ class FileReceiverViewModel(context: Application) :
         }
     }
 
-    private fun getCacheDir(context: Context): File {
-        val cacheDir = File(context.cacheDir, "FileTransfer")   //创建面向缓存的file对象
-        cacheDir.mkdirs()   //创建文件
-        return cacheDir
-    }
+//    private fun getCacheDir(context: Context): File {
+//        val cacheDir = File(context.cacheDir, "FileTransfer")   //创建面向缓存的file对象
+//        cacheDir.mkdirs()   //创建文件
+//        return cacheDir
+//    }
 
     private suspend fun log(log: String) {
         _log.emit(value = log)
+    }
+
+
+
+    fun getDiskCacheDir(context: Context): String? {//获取缓存路径
+        var cachePath: String? = null
+        cachePath =
+            if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState() || !Environment.isExternalStorageRemovable()) {
+                context.externalCacheDir!!.path
+            } else {
+                context.cacheDir.path
+            }
+        return cachePath
     }
 
 }

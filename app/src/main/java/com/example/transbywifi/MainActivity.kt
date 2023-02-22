@@ -54,10 +54,8 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        btnCheckPermission.setOnClickListener {
-            requestPermissionLaunch.launch(requestedPermissions)
-        }
         btnSender.setOnClickListener {
+            requestPermissionLaunch.launch(requestedPermissions)
             if (allPermissionGranted()) {
                 startActivity(FileSenderActivity::class.java)
             } else {
@@ -65,6 +63,7 @@ class MainActivity : BaseActivity() {
             }
         }
         btnReceiver.setOnClickListener {
+            requestPermissionLaunch.launch(requestedPermissions)
             if (allPermissionGranted()) {
                 startActivity(FileReceiverActivity::class.java)
             } else {
