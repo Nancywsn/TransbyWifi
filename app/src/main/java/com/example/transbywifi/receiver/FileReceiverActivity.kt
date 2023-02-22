@@ -121,7 +121,7 @@ class FileReceiverActivity : BaseActivity() {
         }
 
         override fun onConnectionInfoAvailable(wifiP2pInfo: WifiP2pInfo) {
-            log("onConnectionInfoAvailable")
+            log("群组信息（onConnectionInfoAvailable）")
             log("isGroupOwner：" + wifiP2pInfo.isGroupOwner)
             log("groupFormed：" + wifiP2pInfo.groupFormed)
             if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {  //如果有组建立且自己是Go设备
@@ -131,17 +131,25 @@ class FileReceiverActivity : BaseActivity() {
 
         override fun onDisconnection() {
             connectionInfoAvailable = false
-            log("onDisconnection")
+            log("未连接onDisconnection")
         }
 
         override fun onSelfDeviceAvailable(wifiP2pDevice: WifiP2pDevice) {
-            log("onSelfDeviceAvailable: \n$wifiP2pDevice")
+//            log("onSelfDeviceAvailable: \n$wifiP2pDevice")
+            log("本设备信息")
+            log("onSelfDeviceAvailable")
+            log("DeviceName: " + wifiP2pDevice.deviceName)
+            log("DeviceAddress: " + wifiP2pDevice.deviceAddress)
+            log("Status: " + wifiP2pDevice.status)
         }
 
         override fun onPeersAvailable(wifiP2pDeviceList: Collection<WifiP2pDevice>) {
-            log("onPeersAvailable , size:" + wifiP2pDeviceList.size)
+            log("可用设备数量:" + wifiP2pDeviceList.size)
             for (wifiP2pDevice in wifiP2pDeviceList) {
-                log("wifiP2pDevice: $wifiP2pDevice")
+//                log("wifiP2pDevice: $wifiP2pDevice")
+                log("DeviceName: " + wifiP2pDevice.deviceName)
+                log("DeviceAddress: " + wifiP2pDevice.deviceAddress)
+                log("Status: " + wifiP2pDevice.status)
             }
         }
 

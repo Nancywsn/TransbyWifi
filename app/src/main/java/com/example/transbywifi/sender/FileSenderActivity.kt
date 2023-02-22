@@ -176,10 +176,10 @@ class FileSenderActivity : BaseActivity() {
             deviceAdapter.notifyDataSetChanged()    //更新列表
             btnDisconnect.isEnabled = true
             btnChooseFile.isEnabled = true
-            log("onConnectionInfoAvailable")
-            log("onConnectionInfoAvailable groupFormed: " + wifiP2pInfo.groupFormed)    //groupFormed字段保存是否有组建立
-            log("onConnectionInfoAvailable isGroupOwner: " + wifiP2pInfo.isGroupOwner)  //isGroupOwner字段判断自己是否是GO设备
-            log("onConnectionInfoAvailable getHostAddress: " + wifiP2pInfo.groupOwnerAddress.hostAddress)   //groupOwnerAddress字段保存GO设备的地址信息
+            log("群组信息onConnectionInfoAvailable")
+            log("groupFormed: " + wifiP2pInfo.groupFormed)    //groupFormed字段保存是否有组建立
+            log("isGroupOwner: " + wifiP2pInfo.isGroupOwner)  //isGroupOwner字段判断自己是否是GO设备
+            log("getHostAddress: " + wifiP2pInfo.groupOwnerAddress.hostAddress)   //groupOwnerAddress字段保存GO设备的地址信息
             val stringBuilder = StringBuilder() //StringBuilder是一个可变的字符串类
             stringBuilder.append("\n")
             stringBuilder.append("是否群主：")
@@ -210,6 +210,7 @@ class FileSenderActivity : BaseActivity() {
 
         //显示本设备信息
         override fun onSelfDeviceAvailable(wifiP2pDevice: WifiP2pDevice) {
+            log("本设备信息")
             log("onSelfDeviceAvailable")
             log("DeviceName: " + wifiP2pDevice.deviceName)
             log("DeviceAddress: " + wifiP2pDevice.deviceAddress)
@@ -222,7 +223,7 @@ class FileSenderActivity : BaseActivity() {
 
         //4.4 刷新可用设备列表
         override fun onPeersAvailable(wifiP2pDeviceList: Collection<WifiP2pDevice>) {
-            log("onPeersAvailable :" + wifiP2pDeviceList.size)
+            log("可用设备数量:" + wifiP2pDeviceList.size)
             this@FileSenderActivity.wifiP2pDeviceList.clear()   //清除旧的信息
             this@FileSenderActivity.wifiP2pDeviceList.addAll(wifiP2pDeviceList) //更新信息
             deviceAdapter.notifyDataSetChanged()    //更新列表
@@ -248,7 +249,7 @@ class FileSenderActivity : BaseActivity() {
     private fun connect(wifiP2pDevice: WifiP2pDevice) {
 
         AlertDialog.Builder(this).apply {
-            setTitle("This is Dialog")//为这个对话框设置标题、内容
+            setTitle("连接设备")//为这个对话框设置标题、内容
             setMessage("确定连接该设备："+wifiP2pDevice.deviceName)
             setCancelable(false)//可否使用Back键关闭对话框等属性
             setPositiveButton("yes") { dialog, which ->
@@ -285,7 +286,7 @@ class FileSenderActivity : BaseActivity() {
             }
 
             override fun onSuccess() {
-                log("cancelConnect onSuccess")
+                log("断开连接（cancelConnect onSuccess）")
                 tvConnectionStatus.text = null  //显示连接状态为未连接
                 btnDisconnect.isEnabled = false //按钮不使能
                 btnChooseFile.isEnabled = false

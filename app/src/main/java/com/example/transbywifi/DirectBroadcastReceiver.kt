@@ -23,11 +23,8 @@ interface DirectActionListener : WifiP2pManager.ChannelListener {   //发送和�
     fun wifiP2pEnabled(enabled: Boolean)
 
     fun onConnectionInfoAvailable(wifiP2pInfo: WifiP2pInfo)
-
-    fun onDisconnection()
-
     fun onSelfDeviceAvailable(wifiP2pDevice: WifiP2pDevice)
-
+    fun onDisconnection()
     fun onPeersAvailable(wifiP2pDeviceList: Collection<WifiP2pDevice>)
 
 }
