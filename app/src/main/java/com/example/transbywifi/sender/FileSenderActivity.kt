@@ -1,6 +1,7 @@
 package com.example.transbywifi.sender
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
@@ -245,22 +246,34 @@ class FileSenderActivity : BaseActivity() {
     //4.6 此处依然无法通过函数函数来判断连接结果，需要依靠系统发出的 WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION 方法来获取到连接结果
     @SuppressLint("MissingPermission")
     private fun connect(wifiP2pDevice: WifiP2pDevice) {
-        val wifiP2pConfig = WifiP2pConfig() //WifiP2pConfig对象包含要连接的设备的信息
-        wifiP2pConfig.deviceAddress = wifiP2pDevice.deviceAddress
-        wifiP2pConfig.wps.setup = WpsInfo.PBC
-        showLoadingDialog(message = "正在连接，deviceName: " + wifiP2pDevice.deviceName)
-        showToast("正在连接，deviceName: " + wifiP2pDevice.deviceName)
 
-        wifiP2pManager.connect(wifiP2pChannel, wifiP2pConfig, object : WifiP2pManager.ActionListener {
-            override fun onSuccess() {
-                log("connect onSuccess")
-            }
+        AlertDialog.Builder(this).apply {
+            setTitle("This is Dialog")//为这个对话框设置标题、内容
+            setMessage("确定连接该设备："+wifiP2pDevice.deviceName)
+            setCancelable(false)//可否使用Back键关闭对话框等属性
+            setPositiveButton("yes") { dialog, which ->
+                val wifiP2pConfig = WifiP2pConfig() //WifiP2pConfig对象包含要连接的设备的信息
+                wifiP2pConfig.deviceAddress = wifiP2pDevice.deviceAddress
+                wifiP2pConfig.wps.setup = WpsInfo.PBC
+                showLoadingDialog(message = "正在连接，deviceName: " + wifiP2pDevice.deviceName)
+                showToast("正在连接，deviceName: " + wifiP2pDevice.deviceName)
 
-            override fun onFailure(reason: Int) {
-                showToast("连接失败 $reason")
-                dismissLoadingDialog()
+                wifiP2pManager.connect(wifiP2pChannel, wifiP2pConfig, object : WifiP2pManager.ActionListener {
+                    override fun onSuccess() {
+                        log("connect onSuccess")
+                    }
+
+                    override fun onFailure(reason: Int) {
+                        showToast("连接失败 $reason")
+                        dismissLoadingDialog()
+                    }
+                })
             }
-        })
+            setNegativeButton("Cancel") { dialog, which ->
+                dialog.cancel()
+            }//为对话框设置确定按钮\取消按钮的点击事件
+            show()//将对话框显示
+        }
     }
 
     //取消连接和移除群组

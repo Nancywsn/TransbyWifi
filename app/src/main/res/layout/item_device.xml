@@ -14,6 +14,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <CheckBox
+            android:id="@+id/checkDevice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="语文"/>
+
         <TextView
             android:id="@+id/tvDeviceName"
             android:layout_width="match_parent"

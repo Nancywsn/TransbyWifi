@@ -11,9 +11,11 @@ import kotlinx.android.synthetic.main.item_device.view.*
 
 //自定义控件的适配器
 
+//思路1：设置复选框；定义复选响应函数，增加复选确定按钮，改变原来点击反应函数为确定按钮反应的方法，弹出确认框显示选中的设备名，一对一连接发送断开再连接
 interface OnItemClickListener {
 
     fun onItemClick(position: Int)
+
 
 }
 
