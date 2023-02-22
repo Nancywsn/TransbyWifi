@@ -71,7 +71,7 @@ class FileReceiverViewModel(context: Application) :
 
                 val fileTransfer = objectInputStream.readObject() as FileTransfer
 
-                val filename=fileTransfer.fileName;
+                val filename=fileTransfer.fileName
 //                var tag=true
 //
 //                AlertDialog.Builder(getApplication()).apply {
