@@ -3,7 +3,7 @@ package com.example.transbywifi.utils
 import android.net.wifi.p2p.WifiP2pDevice
 
 object WifiP2pUtils {
-
+//获取设备状态
     fun getDeviceStatus(deviceStatus: Int): String {
         return when (deviceStatus) {
             WifiP2pDevice.AVAILABLE -> "可用的"
