@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 //4.客户端（用来发送文件）主动搜索附近的设备，加入到服务器创建的群组，获取服务器的IP地址，向其发起文件传输请求
 
 class MainActivity : BaseActivity() {
-
     private val requestedPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         arrayOf(
             Manifest.permission.ACCESS_NETWORK_STATE,
