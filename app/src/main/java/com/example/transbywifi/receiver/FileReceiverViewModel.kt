@@ -1,5 +1,7 @@
 package com.example.transbywifi.receiver
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
@@ -8,8 +10,10 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.transbywifi.Constants
+import com.example.transbywifi.FileDesUtil.decrypt
 import com.example.transbywifi.models.FileTransfer
 import com.example.transbywifi.models.ViewState
+import com.google.android.material.internal.ContextUtils.getActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,6 +43,7 @@ class FileReceiverViewModel(context: Application) :
     //3.2
     //使用 IntentService 在后台监听客户端的 Socket 连接请求，并通过输入输出流来传输文件。
     //此处的代码比较简单，就只是在指定端口一直堵塞监听客户端的连接请求，获取待传输的文件信息模型 FileTransfer ，之后就进行实际的数据传输
+    @SuppressLint("RestrictedApi")
     fun startListener() {
         if (job != null) {
             return
@@ -72,28 +77,14 @@ class FileReceiverViewModel(context: Application) :
                 val fileTransfer = objectInputStream.readObject() as FileTransfer
 
                 val filename=fileTransfer.fileName
-//                var tag=true
-//
-//                AlertDialog.Builder(getApplication()).apply {
-//                    setTitle("Transfer")//为这个对话框设置标题、内容
-//                    setMessage("文件：$filename")
-//                    setMessage("是否接收该文件？")
-//                    setCancelable(false)//可否使用Back键关闭对话框等属性
-//                    setPositiveButton("OK") { dialog, which ->
-//                        Toast.makeText(getApplication(), "开始接收", Toast.LENGTH_SHORT).show()
-//                    }
-//                    setNegativeButton("Cancel") { dialog, which ->
-//                        Toast.makeText(getApplication(), "拒绝接收", Toast.LENGTH_SHORT).show()
-//                        tag=false
-//                    }//为对话框设置确定按钮\取消按钮的点击事件
-//                    show()//将对话框显示
-//                }
-//                if (tag){
 
-                val file = File(getDiskCacheDir(context = getApplication()),filename) //创建缓存中的file对象
+//                alertdialog(getActivity(getApplication()),filename)
+
+                val tofile = File(getDiskCacheDir(context = getApplication()),filename)
+                val file = File(getCacheDir(context = getApplication()),filename) //创建缓存中的file对象
 
                 log(log = "连接成功，待接收的文件: $fileTransfer")
-                log(log = "文件将保存到: $file")
+                log(log = "解码后的文件将保存到: $tofile")
                 log(log = "开始传输文件")
 
                 fileOutputStream = FileOutputStream(file)   //FileOutputStream流用来写入数据到File对象表示的文件
@@ -101,15 +92,21 @@ class FileReceiverViewModel(context: Application) :
                 while (true) {
                     val length = clientInputStream.read(buffer) //socket到缓存
                     if (length > 0) {
-                        fileOutputStream.write(buffer, 0, length)   //缓存到内存
+                        fileOutputStream.write(buffer, 0, length)
                     } else {
                         break
                     }
                     log(log = "正在传输文件，length : $length")
                 }
-                _viewState.emit(value = ViewState.Success(file = file))
+
+                decode(fromfile = file, tofile = tofile)
+
+                _viewState.emit(value = ViewState.Success(file = tofile))
                 log(log = "文件接收成功")
-//                }
+
+
+                log(log = "文件解码成功")
+
             } catch (e: Throwable) {
                 log(log = "异常: " + e.message)
                 _viewState.emit(value = ViewState.Failed(throwable = e))
@@ -123,21 +120,27 @@ class FileReceiverViewModel(context: Application) :
         job?.invokeOnCompletion {
             job = null
         }
+
     }
 
-//    private fun getCacheDir(context: Context): File {
-//        val cacheDir = File(context.cacheDir, "FileTransfer")   //创建面向缓存的file对象
-//        cacheDir.mkdirs()   //创建文件
-//        return cacheDir
-//    }
+    private fun getCacheDir(context: Context): File {
+        val cacheDir = File(context.cacheDir, "FileTransfer")   //创建面向缓存的file对象
+        cacheDir.mkdirs()   //创建文件
+        return cacheDir
+    }
+
+    private fun decode(fromfile:File,tofile:File){
+        val fpath=fromfile.path
+        val topath=tofile.path
+        decrypt(fpath,topath)
+    }
 
     private suspend fun log(log: String) {
         _log.emit(value = log)
     }
 
 
-
-    fun getDiskCacheDir(context: Context): String? {//获取缓存路径
+    private fun getDiskCacheDir(context: Context): String? {//获取缓存路径
         var cachePath: String? = null
         cachePath =
             if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState() || !Environment.isExternalStorageRemovable()) {
@@ -147,5 +150,22 @@ class FileReceiverViewModel(context: Application) :
             }
         return cachePath
     }
+
+//    private fun alertdialog(context: Activity?, name:String){
+//        AlertDialog.Builder(context).apply {
+//            setTitle("Transfer")//为这个对话框设置标题、内容
+//            setMessage("文件：$name")
+//            setMessage("是否接收该文件？")
+//            setCancelable(false)//可否使用Back键关闭对话框等属性
+//            setPositiveButton("OK") { dialog, which ->
+//                Toast.makeText(getApplication(), "开始接收", Toast.LENGTH_SHORT).show()
+//            }
+//            setNegativeButton("Cancel") { dialog, which ->
+//                Toast.makeText(getApplication(), "拒绝接收", Toast.LENGTH_SHORT).show()
+//            }//为对话框设置确定按钮\取消按钮的点击事件
+//            show()//将对话框显示
+//        }
+//    }
+
 
 }
