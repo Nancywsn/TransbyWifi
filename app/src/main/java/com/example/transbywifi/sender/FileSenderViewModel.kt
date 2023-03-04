@@ -3,11 +3,14 @@ package com.example.transbywifi.sender
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import android.os.Environment
 import androidx.core.net.toFile
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.transbywifi.Constants
+import com.example.transbywifi.FileDesUtil
+import com.example.transbywifi.FileDesUtil.encrypt
 import com.example.transbywifi.models.FileTransfer
 import com.example.transbywifi.models.ViewState
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +49,8 @@ class FileSenderViewModel(context: Application) :
 
     private var job: Job? = null
 
+
+
     fun send(ipAddress: String, fileUri: Uri) {
         if (job != null) {
             return
@@ -68,10 +73,15 @@ class FileSenderViewModel(context: Application) :
                 try {   //try catch 语句来捕获异常并处理
                     val cacheFile = //构建File对象指定缓存内文件路径，fileUri是内存中选定的文件路径
                         saveFileToCacheDir(context = getApplication(), fileUri = fileUri)
+                    val tofile=File(getDiskCacheDir(context = getApplication()),cacheFile.name)
+
+                    code(cacheFile,tofile)
+
                     val fileTransfer = FileTransfer(fileName = cacheFile.name)  //一种文件信息模型
 
                     _viewState.emit(value = ViewState.Connecting)
                     _log.emit(value = "待发送的文件: $fileTransfer")
+                    _log.emit(value = "DES编码后的文件位置: $tofile")
                     _log.emit(value = "开启 Socket")
 
                     socket = Socket()   //创建
@@ -80,7 +90,7 @@ class FileSenderViewModel(context: Application) :
                     _log.emit(value = "socket connect，如果三十秒内未连接成功则放弃")
 
                     socket.connect(InetSocketAddress(ipAddress, Constants.PORT),
-                        30000) //ipAddress目的接收地址，超时时间设为30秒
+                        60000) //ipAddress目的接收地址，超时时间设为30秒
 
                     _viewState.emit(value = ViewState.Receiving)
                     _log.emit(value = "连接成功，开始传输文件")
@@ -90,7 +100,7 @@ class FileSenderViewModel(context: Application) :
                     objectOutputStream = ObjectOutputStream(outputStream)
                     objectOutputStream.writeObject(fileTransfer)    //  writeObject 方法用于将对象写入流中
 
-                    fileInputStream = FileInputStream(cacheFile)    //读取硬盘上的文件，应该使用输入流
+                    fileInputStream = FileInputStream(tofile)    //读取硬盘上的文件，应该使用输入流
                     val buffer = ByteArray(1024 * 100)  //指定多少字节的数组，存储文件内容
                     var length: Int
                     while (true) {  //按指定大小分块输出文件内容
@@ -132,7 +142,7 @@ class FileSenderViewModel(context: Application) :
                 outputFile.delete()
             }
             outputFile.createNewFile()  //创建缓存文件
-            val outputFileUri = Uri.fromFile(outputFile)
+            val outputFileUri = Uri.fromFile(outputFile)//fromFile(outputFile)表示ducumentfile
             copyFile(context, fileUri, outputFileUri)   //将本地文件复制到缓存
             return@withContext outputFile
         }
@@ -141,6 +151,7 @@ class FileSenderViewModel(context: Application) :
     private suspend fun copyFile(context: Context, inputUri: Uri, outputUri: Uri) {
         //withContext函数通过Dispatchers切换到指定的线程，并在闭包内的逻辑执行结束之后，自动把线程切回去继续执行，返回最后一行的值
         withContext(context = Dispatchers.IO) {
+
             val inputStream = context.contentResolver.openInputStream(inputUri)
                 ?: throw NullPointerException("InputStream for given input Uri is null")
             val outputStream = FileOutputStream(outputUri.toFile())
@@ -157,6 +168,23 @@ class FileSenderViewModel(context: Application) :
             inputStream.close()
             outputStream.close()
         }
+    }
+
+    private fun code(fromfile:File,tofile:File){
+        val fpath=fromfile.path
+        val topath=tofile.path
+        encrypt(fpath, topath)
+    }
+
+    private fun getDiskCacheDir(context: Context): String? {//获取缓存路径
+        var cachePath: String? = null
+        cachePath =
+            if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState() || !Environment.isExternalStorageRemovable()) {
+                context.externalCacheDir!!.path
+            } else {
+                context.cacheDir.path
+            }
+        return cachePath
     }
 
 }
