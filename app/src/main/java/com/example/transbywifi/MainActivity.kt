@@ -10,8 +10,8 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import com.example.transbywifi.receiver.FileReceiverActivity
-import com.example.transbywifi.sender.FileSenderActivity
+import com.example.transbywifi.groupowner.FileReceiverActivity
+import com.example.transbywifi.client.FileSenderActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 //1.在 AndroidManifest 中声明相关权限（网络和文件读写权限）
