@@ -42,8 +42,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:enabled="false"
+                android:enabled="true"
                 android:text="选择文件" />
+
+            <Button
+                android:id="@+id/btnsendip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:enabled="true"
+                android:text="发送ip" />
         </LinearLayout>
 
 

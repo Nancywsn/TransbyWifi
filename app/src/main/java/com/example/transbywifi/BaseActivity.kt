@@ -3,8 +3,11 @@ package com.example.transbywifi
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
+import android.net.wifi.WifiManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+
+
 //ddd
 open class BaseActivity : AppCompatActivity() {
 
@@ -35,5 +38,36 @@ open class BaseActivity : AppCompatActivity() {
     protected fun <T : Activity> startActivity(clazz: Class<T>) {
         startActivity(Intent(this, clazz))
     }
+
+    fun getIpAddress(): String? {
+        //ipv6格式的地址
+//        try {
+//            val en: Enumeration<NetworkInterface> = NetworkInterface.getNetworkInterfaces()
+//            while (en.hasMoreElements()) {
+//                val nwInterface: NetworkInterface = en.nextElement()
+//                val enumIpAdder: Enumeration<InetAddress> = nwInterface.inetAddresses
+//                while (enumIpAdder.hasMoreElements()) {
+//                    val netAddress: InetAddress = enumIpAdder.nextElement()
+//                    if (!netAddress.isLoopbackAddress  && !netAddress.isLinkLocalAddress) {
+//                    return netAddress.hostAddress.toString()
+//                    }
+//                }
+//            }
+//        } catch (e: SocketException) {
+//            e.printStackTrace()
+//        }
+//        return null
+
+        //获取ipv4格式的地址
+        val wifiManager = applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
+        val wifiInfo = wifiManager.connectionInfo
+        val ipAddress = wifiInfo.ipAddress
+        return (ipAddress and 0xff).toString() + "." +
+                (ipAddress shr 8 and 0xff) + "." +
+                (ipAddress shr 16 and 0xff) + "." +
+                (ipAddress shr 24 and 0xff)
+    }
+
+
 
 }

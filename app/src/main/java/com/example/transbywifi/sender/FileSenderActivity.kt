@@ -41,7 +41,22 @@ class FileSenderActivity : BaseActivity() {
             getContentLaunch.launch("image/*")  //跳转文件选择界，获取相册
             //"image/*"指定只显示图片
         }
+        btnsendip.setOnClickListener{
+            val ipAddress = wifiP2pInfo?.groupOwnerAddress?.hostAddress     //群主的IP地址
+//            val ipAddress ="10.10.254.94"//平板的ip
+            //发送本机IP地址
+            if (ipAddress != null) {
+                fileSenderViewModel.sendip(ipAddress, getIpAddress()!!)
+            }
+
+            log("已发送本机IP地址")
+
+        }
         btnDirectDiscover.setOnClickListener {
+            val ipaddress=getIpAddress()
+            log("本机ip地址：$ipaddress")
+
+
             if (!wifiP2pEnabled) {
                 showToast("需要先打开Wifi")
                 return@setOnClickListener
@@ -140,10 +155,13 @@ class FileSenderActivity : BaseActivity() {
     ) { imageUri ->
         if (imageUri != null) {
             val ipAddress = wifiP2pInfo?.groupOwnerAddress?.hostAddress     //群主的IP地址
+//            val ipAddress ="2001:250:4000:4199:f083:c6ff:fec9:2839"
+//            val ipAddress ="10.15.187.12"
+
             //getHostAddress方法返回字符串形式的IP地址
             log("getContentLaunch $imageUri $ipAddress")
             if (!ipAddress.isNullOrBlank()) {   //如果ipaddress不为空，则开始发送文件
-                //isNullOrBlank为空指针或者字串长度为0或者全为空格时返回true，非空串与可空串均可调用
+             //isNullOrBlank为空指针或者字串长度为0或者全为空格时返回true，非空串与可空串均可调用
                 fileSenderViewModel.send(ipAddress = ipAddress, fileUri = imageUri)
             }
         }

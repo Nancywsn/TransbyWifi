@@ -40,6 +40,67 @@ class FileReceiverViewModel(context: Application) :
 
     private var job: Job? = null
 
+    fun receiveip(iplist: MutableList<String>) {
+
+        if (job != null) {
+            return
+        }
+        job = viewModelScope.launch(context = Dispatchers.IO) {
+
+            var serverSocket: ServerSocket? = null
+            var clientInputStream: InputStream? = null
+            try {
+
+                log(log = "开启 Socket")
+
+                serverSocket = ServerSocket()   //创建服务端socket
+                serverSocket.bind(InetSocketAddress(Constants.PORT))    //绑定端口号
+                serverSocket.reuseAddress = true
+                serverSocket.soTimeout = 60000  //超时
+
+                log(log = "socket accept，60秒内如果未成功则断开链接")
+
+                val client = serverSocket.accept()  //监听客户端请求
+                clientInputStream = client.getInputStream()// 建立好连接后，从socket中获取输入流，并建立缓冲区进行读取
+
+                log(log = "开始传输ip")
+
+                val bytes = ByteArray(1024)
+                val sb = StringBuilder()
+                var len: Int
+
+                //只有当客户端关闭它的输出流的时候，服务端才能取得结尾的-1
+                while (clientInputStream.read(bytes).also { len = it } != -1) {
+                    // 注意指定编码格式，发送方和接收方一定要统一，建议使用UTF-8
+                    sb.append(String(bytes, 0, len, charset("UTF-8")))
+                }
+                log("接收到ip地址: $sb")
+
+                iplist.add(sb.toString())
+                log("ip地址列表: $iplist")
+
+                val outputStream = client.getOutputStream()
+                outputStream.write("Hello Client,I get the message.".toByteArray(charset("UTF-8")))
+                outputStream.close()
+
+                client.close()
+
+            } catch (e: Throwable) {
+                log(log = "异常: " + e.message)
+                _viewState.emit(value = ViewState.Failed(throwable = e))
+            } finally {
+
+                serverSocket?.close()
+                clientInputStream?.close()
+
+            }
+        }
+        job?.invokeOnCompletion {
+            job = null
+        }
+//        return sb.toString()
+    }
+
     //3.2
     //使用 IntentService 在后台监听客户端的 Socket 连接请求，并通过输入输出流来传输文件。
     //此处的代码比较简单，就只是在指定端口一直堵塞监听客户端的连接请求，获取待传输的文件信息模型 FileTransfer ，之后就进行实际的数据传输
