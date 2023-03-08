@@ -32,7 +32,7 @@ class DeviceAdapter(private val wifiP2pDeviceList: List<WifiP2pDevice>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val device = wifiP2pDeviceList[position]
         holder.tvDeviceName.text = device.deviceName
-        holder.tvDeviceAddress.text = device.deviceAddress
+//        holder.tvDeviceAddress.text = device.deviceAddress
         holder.tvDeviceDetails.text = WifiP2pUtils.getDeviceStatus(deviceStatus = device.status)
         holder.itemView.setOnClickListener {
             onItemClickListener?.onItemClick(position = position)
@@ -45,11 +45,11 @@ class DeviceAdapter(private val wifiP2pDeviceList: List<WifiP2pDevice>) :
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvDeviceName: TextView
-        val tvDeviceAddress: TextView
+//        val tvDeviceAddress: TextView
         val tvDeviceDetails: TextView
         init {
             tvDeviceName = itemView.tvDeviceName
-            tvDeviceAddress = itemView.tvDeviceAddress
+//            tvDeviceAddress = itemView.tvDeviceAddress
             tvDeviceDetails = itemView.tvDeviceDetails
         }
     }

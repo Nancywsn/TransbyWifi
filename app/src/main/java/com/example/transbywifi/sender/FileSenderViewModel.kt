@@ -9,8 +9,8 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.transbywifi.Constants
-import com.example.transbywifi.FileDesUtil
 import com.example.transbywifi.FileDesUtil.encrypt
+import com.example.transbywifi.Logger.log
 import com.example.transbywifi.models.FileTransfer
 import com.example.transbywifi.models.ViewState
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +50,86 @@ class FileSenderViewModel(context: Application) :
     private var job: Job? = null
 
 
+    fun sendip(ipAddress: String,ipsent:String){
+
+        if (job != null) {
+            return
+        }
+        job = viewModelScope.launch {
+            withContext(context = Dispatchers.IO) {//withContext特殊的作用域构建器，挂起函数，async函数的一种简化版写法
+                _viewState.emit(value = ViewState.Idle)
+
+                var socket: Socket? = null
+                var outputStream: OutputStream? = null
+
+                try {   //try catch 语句来捕获异常并处理
+//                    val socket = Socket(ipAddress, 8899)
+//                    // 建立连接后获得输出流
+//                    val outputStream = socket.getOutputStream()
+//                    //传输的信息
+//                    socket.getOutputStream().write(ipsent.toByteArray(charset("UTF-8")))
+//                    //单方面关闭输入输出流，不会造成socket关闭（）
+//                    socket.shutdownOutput()
+//                    val inputStream = socket.getInputStream()
+//                    val bytes = ByteArray(1024)
+//                    var len: Int
+//                    val sb = StringBuilder()
+//                    while (inputStream.read(bytes).also { len = it } != -1) {
+//                        //注意指定编码格式，发送方和接收方一定要统一，建议使用UTF-8
+//                        sb.append(String(bytes, 0, len, charset("UTF-8")))
+//                    }
+//                    log("Get message from server: $sb")
+//                    inputStream.close()
+//                    outputStream.close()
+//                    socket.close()
+
+
+                    _log.emit(value = "待发送的本机ip: $ipsent")
+                    _log.emit(value = "开启 Socket")
+
+                    socket = Socket()   //创建
+                    socket.bind(null)   //初始化绑定
+
+                    _log.emit(value = "socket connect，如果三十秒内未连接成功则放弃")
+
+                    socket.connect(InetSocketAddress(ipAddress, Constants.PORT),
+                        60000) //ipAddress目的接收地址，超时时间设为30秒
+
+                    _log.emit(value = "连接成功，开始传输文件")
+
+                    outputStream = socket.getOutputStream() //socket输出流
+                    outputStream.write(ipsent.toByteArray(charset("UTF-8")))
+
+                    _log.emit(value = "文件发送成功")
+
+                    //单方面关闭输入输出流，不会造成socket关闭（）
+                    socket.shutdownOutput()
+                    val inputStream = socket.getInputStream()
+                    val bytes = ByteArray(1024)
+                    var len: Int
+                    val sb = StringBuilder()
+                    while (inputStream.read(bytes).also { len = it } != -1) {
+                        //注意指定编码格式，发送方和接收方一定要统一，建议使用UTF-8
+                        sb.append(String(bytes, 0, len, charset("UTF-8")))
+                    }
+                    _log.emit("Get message from server: $sb")
+                    inputStream.close()
+
+                } catch (e: Throwable) {
+                    e.printStackTrace() //指出异常的类型、性质、栈层次及出现在程序中的位置
+                    _log.emit(value = "异常: " + e.message)   //getMessage() 方法：输出错误的性质。
+
+                } finally { //无论是否发生异常（除特殊情况外），finally 语句块中的代码都会被执行，一般用于清理资源
+
+                    outputStream?.close()
+                    socket?.close()
+                }
+            }
+        }
+        job?.invokeOnCompletion {   //用于监听其完成或者其取消状态
+            job = null
+        }
+    }
 
     fun send(ipAddress: String, fileUri: Uri) {
         if (job != null) {
@@ -80,6 +160,7 @@ class FileSenderViewModel(context: Application) :
                     val fileTransfer = FileTransfer(fileName = cacheFile.name)  //一种文件信息模型
 
                     _viewState.emit(value = ViewState.Connecting)
+                    _log.emit(value = "接收端的ip地址: $ipAddress")
                     _log.emit(value = "待发送的文件: $fileTransfer")
                     _log.emit(value = "DES编码后的文件位置: $tofile")
                     _log.emit(value = "开启 Socket")

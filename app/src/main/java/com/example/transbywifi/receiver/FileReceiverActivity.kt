@@ -1,7 +1,6 @@
 package com.example.transbywifi.receiver
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
@@ -41,12 +40,19 @@ class FileReceiverActivity : BaseActivity() {
         supportActionBar?.title = "文件接收端"
         btnCreatGroup.setOnClickListener {
             createGroup()
+            val ipaddress=getIpAddress()
+            log("本机ip地址：$ipaddress")
         }
         btnRemoveGroup.setOnClickListener {
             removeGroup()
         }
         btnStartReceive.setOnClickListener {
             fileReceiverViewModel.startListener()   //开启监听
+        }
+        btnReceiveip.setOnClickListener {
+
+            fileReceiverViewModel.receiveip(iplist)
+//            log("接收到组员的ip地址："+fileReceiverViewModel.receiveip())
         }
     }
 
@@ -105,6 +111,8 @@ class FileReceiverActivity : BaseActivity() {
     }
 
 
+    private var iplist = mutableListOf<String>()
+
     private val fileReceiverViewModel by viewModels<FileReceiverViewModel>()
 
     private lateinit var wifiP2pManager: WifiP2pManager
@@ -124,6 +132,8 @@ class FileReceiverActivity : BaseActivity() {
             log("群组信息（onConnectionInfoAvailable）")
             log("isGroupOwner：" + wifiP2pInfo.isGroupOwner)
             log("groupFormed：" + wifiP2pInfo.groupFormed)
+            log("GOip:"+wifiP2pInfo.groupOwnerAddress.hostAddress)
+            //WifiP2p为每个组所有者分配相同的地址,192.168.49.1并使用192.168.49.0/24DHCP中的池向加入组所有者的设备发出地址
             if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {  //如果有组建立且自己是Go设备
                 connectionInfoAvailable = true
             }
@@ -134,13 +144,14 @@ class FileReceiverActivity : BaseActivity() {
             log("未连接onDisconnection")
         }
 
+        //wifiP2pDevice的意思是【本机设备信息】
         override fun onSelfDeviceAvailable(wifiP2pDevice: WifiP2pDevice) {
 //            log("onSelfDeviceAvailable: \n$wifiP2pDevice")
             log("本设备信息")
             log("onSelfDeviceAvailable")
             log("DeviceName: " + wifiP2pDevice.deviceName)
-            log("DeviceAddress: " + wifiP2pDevice.deviceAddress)
-            log("Status: " + wifiP2pDevice.status)
+            log("DeviceAddress: " + wifiP2pDevice.deviceAddress)//本机mac地址
+            log("Status: " + wifiP2pDevice.status)//（0是连接 ，1是邀请中，3是未连接，但是可用，4是不可用）
         }
 
         override fun onPeersAvailable(wifiP2pDeviceList: Collection<WifiP2pDevice>) {
