@@ -43,13 +43,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".sender.FileSenderActivity"
+            android:name=".client.FileSenderActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation|uiMode"
             android:exported="false"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".receiver.FileReceiverActivity"
+            android:name=".groupowner.FileReceiverActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation|uiMode"
             android:exported="false"
             android:screenOrientation="portrait"
