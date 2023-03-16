@@ -2,5 +2,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/instuction_item"
-        android:title="使用帮助"/>
+        android:title="使用说明"/>
 </menu>

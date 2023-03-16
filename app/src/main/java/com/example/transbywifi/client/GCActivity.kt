@@ -47,13 +47,13 @@ class FileSenderActivity : BaseActivity() {
         }
         btnsendip.setOnClickListener{
             val ipAddress = wifiP2pInfo?.groupOwnerAddress?.hostAddress     //群主的IP地址
-//            val ipAddress ="10.10.254.94"//平板的ip
+            val sendmessage=devicename+"0a"+getIpAddress()!!
+            log("将发送：$sendmessage")
             //发送本机IP地址
             if (ipAddress != null) {
-                fileSenderViewModel.sendip(ipAddress, getIpAddress()!!)
+                fileSenderViewModel.sendip(ipAddress, sendmessage)
             }
-
-            log("已发送本机IP地址")
+            log("已发送本机名和IP地址")
 
         }
         btnDirectDiscover.setOnClickListener {
@@ -186,6 +186,8 @@ class FileSenderActivity : BaseActivity() {
 
     private var wifiP2pEnabled = false
 
+    var devicename:String? = null
+
     private val directActionListener = object : DirectActionListener {  //广播接收器的实例
 
         override fun wifiP2pEnabled(enabled: Boolean) {
@@ -235,6 +237,7 @@ class FileSenderActivity : BaseActivity() {
         override fun onSelfDeviceAvailable(wifiP2pDevice: WifiP2pDevice) {
             log("本设备信息")
             log("onSelfDeviceAvailable")
+            devicename=wifiP2pDevice.deviceName
             log("DeviceName: " + wifiP2pDevice.deviceName)
             log("DeviceAddress: " + wifiP2pDevice.deviceAddress)
             log("Status: " + wifiP2pDevice.status)
