@@ -1,11 +1,13 @@
 package com.example.transbywifi.groupowner
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -42,15 +44,13 @@ class FileReceiverActivity : BaseActivity() {
             removeGroup()
         }
         btnGOchoose.setOnClickListener {
-            getContentLaunch.launch("image/*")  //跳转文件选择界，获取相册
-            //"image/*"指定只显示图片
+            alertdialog(devicenamelist )
         }
         btnStartReceive.setOnClickListener {
             fileReceiverViewModel.startListener()   //开启监听
         }
         btnReceiveip.setOnClickListener {
-            fileReceiverViewModel.receiveip(iplist)
-//            log("接收到组员的ip地址："+fileReceiverViewModel.receiveip())
+            fileReceiverViewModel.receiveip(devicenamelist,iplist)
         }
     }
 
@@ -109,7 +109,8 @@ class FileReceiverActivity : BaseActivity() {
     }
 
 
-    private var iplist = mutableListOf<String>()
+    private var iplist = mutableSetOf<String>()
+    private var devicenamelist = mutableSetOf<String>()
 
     private val getContentLaunch = registerForActivityResult(
         ActivityResultContracts.GetContent()
@@ -120,6 +121,22 @@ class FileReceiverActivity : BaseActivity() {
     }
 
 
+    private fun alertdialog(devicenamelist: MutableSet<String>){
+        AlertDialog.Builder(this).apply {
+            setTitle("GroupMember")//为这个对话框设置标题、内容
+            setMessage("是否对以下设备发送文件？")
+            setMessage(devicenamelist.toString())
+            setCancelable(true)//可否使用Back键关闭对话框等属性
+            setPositiveButton("yes") { dialog, which ->
+                getContentLaunch.launch("image/*")  //跳转文件选择界，获取相册
+                //"image/*"指定只显示图片
+            }
+            setNegativeButton("Cancel") { dialog, which ->
+                Toast.makeText(application, "取消发送", Toast.LENGTH_SHORT).show()
+            }//为对话框设置确定按钮\取消按钮的点击事件
+            show()//将对话框显示
+        }
+    }
 
     private val fileReceiverViewModel by viewModels<FileReceiverViewModel>()
 

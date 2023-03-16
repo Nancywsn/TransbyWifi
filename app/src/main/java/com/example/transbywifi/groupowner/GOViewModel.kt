@@ -40,7 +40,7 @@ class FileReceiverViewModel(context: Application) :
 
     private var job: Job? = null
 
-    fun receiveip(iplist: MutableList<String>) {
+    fun receiveip(devicenamelist: MutableSet<String>,iplist: MutableSet<String>) {
 
         if (job != null) {
             return
@@ -76,12 +76,12 @@ class FileReceiverViewModel(context: Application) :
                 }
                 log("接收到ip地址: $sb")
 
-                iplist.add(sb.toString())
-                log("ip地址列表: $iplist")
-//                log("first ip:"+iplist.first().toString())
-                for(str in iplist){
-                    log("ip地址列表: $str")
-                }
+                var index=sb.indexOf("0a")
+                devicenamelist.add(sb.substring(0,index))
+                iplist.add(sb.substring(index+2))
+
+                log("组员信息: $devicenamelist")
+                log("ip信息: $iplist")
 
                 val outputStream = client.getOutputStream()
                 outputStream.write("Hello Client,I get the message.".toByteArray(charset("UTF-8")))
@@ -104,7 +104,7 @@ class FileReceiverViewModel(context: Application) :
         }
 //        return sb.toString()
     }
-    fun send(iplist: MutableList<String>, fileUri: Uri) {
+    fun send(iplist: MutableSet<String>, fileUri: Uri) {
 
                 if (job != null) {
                     return
@@ -242,8 +242,6 @@ class FileReceiverViewModel(context: Application) :
 
                         val filename=fileTransfer.fileName
 
-//                alertdialog(getActivity(getApplication()),filename)
-
                         val tofile = File(getDiskCacheDir(context = getApplication()),filename)
                         val file = File(getCacheDir(context = getApplication()),filename) //创建缓存中的file对象
 
@@ -356,21 +354,5 @@ class FileReceiverViewModel(context: Application) :
                     }
                 return cachePath
             }
-
-//    private fun alertdialog(context: Activity?, name:String){
-//        AlertDialog.Builder(context).apply {
-//            setTitle("Transfer")//为这个对话框设置标题、内容
-//            setMessage("文件：$name")
-//            setMessage("是否接收该文件？")
-//            setCancelable(false)//可否使用Back键关闭对话框等属性
-//            setPositiveButton("OK") { dialog, which ->
-//                Toast.makeText(getApplication(), "开始接收", Toast.LENGTH_SHORT).show()
-//            }
-//            setNegativeButton("Cancel") { dialog, which ->
-//                Toast.makeText(getApplication(), "拒绝接收", Toast.LENGTH_SHORT).show()
-//            }//为对话框设置确定按钮\取消按钮的点击事件
-//            show()//将对话框显示
-//        }
-//    }
 
     }
