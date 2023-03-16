@@ -5,9 +5,13 @@ package com.example.transbywifi
 //主分支收到修改
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import com.example.transbywifi.groupowner.FileReceiverActivity
@@ -69,6 +73,8 @@ class MainActivity : BaseActivity() {
                 onPermissionDenied()
             }
         }
+
+
     }
 
     private fun onPermissionDenied() {
@@ -88,4 +94,16 @@ class MainActivity : BaseActivity() {
         return true
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.instruction, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val intent = Intent(this, Instruction::class.java)
+        when (item.itemId) {
+            R.id.instuction_item -> startActivity(intent)
+        }
+        return true
+    }
 }

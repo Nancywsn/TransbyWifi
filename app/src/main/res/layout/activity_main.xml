@@ -8,19 +8,9 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="260dp"
-        android:layout_height="320dp"
+        android:layout_width="280dp"
+        android:layout_height="360dp"
         app:srcCompat="@drawable/dolphinjump" />
-
-
-    <TextView
-        android:layout_width="214dp"
-        android:layout_height="58dp"
-        android:layout_margin="12dp"
-        android:gravity="center"
-        android:text="请在使用时打开Wifi和GPS并授予所有权限"
-        android:textColor="@android:color/black"
-        android:textSize="18sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,19 +27,32 @@
             android:layout_centerInParent="true"
             android:layout_margin="20dp"
             android:background="@drawable/shape_circle"
+            android:textSize="20sp"
             android:text="组员" />
 
 
         <Button
             android:id="@+id/btnReceiver"
             android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:layout_margin="20dp"
             android:background="@drawable/shape_circle"
-            android:text="组长" />
+            android:text="组长"
+            android:textSize="20sp" />
 
     </LinearLayout>
 
+    <!--
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="30dp"
+        android:backgroundTint="@color/myColor"
+        android:src="@drawable/ic_tips"
+        tools:ignore="SpeakableTextPresentCheck" />
+    -->
 
 </LinearLayout>
