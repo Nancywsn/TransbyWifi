@@ -62,7 +62,7 @@ class FileSenderViewModel(context: Application) :
 
                 try {   //try catch 语句来捕获异常并处理
 
-                    _log.emit(value = "待发送的本机ip: $ipsent")
+                    _log.emit(value = "待发送的本机信息: $ipsent")
                     _log.emit(value = "开启 Socket")
 
                     socket = Socket()   //创建

@@ -51,17 +51,5 @@
 
     </LinearLayout>
 
-    <!--
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="30dp"
-        android:backgroundTint="@color/myColor"
-        android:src="@drawable/ic_tips"
-        tools:ignore="SpeakableTextPresentCheck" />
-    -->
-
     </LinearLayout>
 </ScrollView>

@@ -14,6 +14,7 @@ import com.example.transbywifi.FileDesUtil
 import com.example.transbywifi.FileDesUtil.decrypt
 import com.example.transbywifi.models.FileTransfer
 import com.example.transbywifi.models.ViewState
+import kotlinx.android.synthetic.main.activity_file_gowner.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,6 +38,10 @@ class FileReceiverViewModel(context: Application) :
     private val _log = MutableSharedFlow<String>()
 
     val log: SharedFlow<String> = _log
+
+    private val _text = MutableSharedFlow<String>()
+
+    val nametext: SharedFlow<String> = _text
 
     private var job: Job? = null
 
@@ -74,14 +79,15 @@ class FileReceiverViewModel(context: Application) :
                     // 注意指定编码格式，发送方和接收方一定要统一，建议使用UTF-8
                     sb.append(String(bytes, 0, len, charset("UTF-8")))
                 }
-                log("接收到ip地址: $sb")
+                log("接收到ip信息: $sb")
 
                 var index=sb.indexOf("0a")
                 devicenamelist.add(sb.substring(0,index))
                 iplist.add(sb.substring(index+2))
+                _text.emit(devicenamelist.toString())
 
-                log("组员信息: $devicenamelist")
-                log("ip信息: $iplist")
+                log("组员名字: $devicenamelist")
+                log("ip地址: $iplist")
 
                 val outputStream = client.getOutputStream()
                 outputStream.write("Hello Client,I get the message.".toByteArray(charset("UTF-8")))
@@ -102,7 +108,7 @@ class FileReceiverViewModel(context: Application) :
         job?.invokeOnCompletion {
             job = null
         }
-//        return sb.toString()
+
     }
     fun send(iplist: MutableSet<String>, fileUri: Uri) {
 
@@ -123,8 +129,6 @@ class FileReceiverViewModel(context: Application) :
 
                         for(ipAddress in iplist){
                             if (ipAddress.isNotBlank()) {   //如果ipaddress不为空，则开始发送文件
-
-                                _log.emit(value = "withContext iplist: $iplist")
                                 var socket: Socket? = null
                                 var outputStream: OutputStream? = null
                                 var objectOutputStream: ObjectOutputStream? = null
@@ -345,6 +349,7 @@ class FileReceiverViewModel(context: Application) :
             private suspend fun log(log: String) {
                 _log.emit(value = log)
             }
+
 
             private fun getDiskCacheDir(context: Context): String? {//获取缓存路径
                 val cachePath: String? = if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState() || !Environment.isExternalStorageRemovable()) {

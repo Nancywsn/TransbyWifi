@@ -1,9 +1,5 @@
 package com.example.transbywifi
 
-//github使用测试
-//只提交修改了的文件
-//主分支收到修改
-
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager

@@ -14,13 +14,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-<!--        <CheckBox-->
-<!--            android:id="@+id/checkDevice"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:checked="false"-->
-<!--            android:text="语文"/>-->
-
         <TextView
             android:id="@+id/tvDeviceName"
             android:layout_width="match_parent"
@@ -30,14 +23,6 @@
             android:textSize="16sp"
             tools:text="Android N" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/tvDeviceAddress"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:gravity="center_vertical"-->
-<!--            android:textColor="@android:color/black"-->
-<!--            android:textSize="16sp"-->
-<!--            tools:text="192.168.0.1" />-->
 
         <TextView
             android:id="@+id/tvDeviceDetails"

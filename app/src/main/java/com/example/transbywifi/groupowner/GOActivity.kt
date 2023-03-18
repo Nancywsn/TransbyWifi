@@ -35,6 +35,7 @@ class FileReceiverActivity : BaseActivity() {
     @SuppressLint("SuspiciousIndentation")
     private fun initView() {
         supportActionBar?.title = "P2P Group Owner"
+
         btnCreatGroup.setOnClickListener {
             createGroup()
             val ipaddress=getIpAddress()
@@ -50,6 +51,7 @@ class FileReceiverActivity : BaseActivity() {
             fileReceiverViewModel.startListener()   //开启监听
         }
         btnReceiveip.setOnClickListener {
+            clearLog()
             fileReceiverViewModel.receiveip(devicenamelist,iplist)
         }
     }
@@ -104,6 +106,11 @@ class FileReceiverActivity : BaseActivity() {
         lifecycleScope.launch {
             fileReceiverViewModel.log.collect {
                 log(it)
+            }
+        }
+        lifecycleScope.launch {
+            fileReceiverViewModel.nametext.collect {
+                ClientName.text = it
             }
         }
     }
@@ -171,7 +178,6 @@ class FileReceiverActivity : BaseActivity() {
 
         //wifiP2pDevice的意思是【本机设备信息】
         override fun onSelfDeviceAvailable(wifiP2pDevice: WifiP2pDevice) {
-//            log("onSelfDeviceAvailable: \n$wifiP2pDevice")
             log("本设备信息")
             log("onSelfDeviceAvailable")
             log("DeviceName: " + wifiP2pDevice.deviceName)
@@ -182,7 +188,6 @@ class FileReceiverActivity : BaseActivity() {
         override fun onPeersAvailable(wifiP2pDeviceList: Collection<WifiP2pDevice>) {
             log("可用设备数量:" + wifiP2pDeviceList.size)
             for (wifiP2pDevice in wifiP2pDeviceList) {
-//                log("wifiP2pDevice: $wifiP2pDevice")
                 log("DeviceName: " + wifiP2pDevice.deviceName)
                 log("DeviceAddress: " + wifiP2pDevice.deviceAddress)
                 log("Status: " + wifiP2pDevice.status)
@@ -244,6 +249,7 @@ class FileReceiverActivity : BaseActivity() {
                         override fun onSuccess() {
                             val log = "removeGroup onSuccess"
                             log(log = log)
+                            ClientName.text="未建立群组"
                             showToast(message = log)
                             continuation.resume(value = Unit)
                         }

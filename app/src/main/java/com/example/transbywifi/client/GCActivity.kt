@@ -57,9 +57,9 @@ class FileSenderActivity : BaseActivity() {
 
         }
         btnDirectDiscover.setOnClickListener {
+            clearLog()
             val ipaddress=getIpAddress()
             log("本机ip地址：$ipaddress")
-
 
             if (!wifiP2pEnabled) {
                 showToast("需要先打开Wifi")
@@ -160,8 +160,6 @@ class FileSenderActivity : BaseActivity() {
     ) { imageUri ->
         if (imageUri != null) {
             val ipAddress = wifiP2pInfo?.groupOwnerAddress?.hostAddress     //群主的IP地址
-//            val ipAddress ="2001:250:4000:4199:f083:c6ff:fec9:2839"
-//            val ipAddress ="10.15.187.12"
 
             //getHostAddress方法返回字符串形式的IP地址
             log("getContentLaunch $imageUri $ipAddress")
@@ -308,10 +306,12 @@ class FileSenderActivity : BaseActivity() {
         wifiP2pManager.cancelConnect(wifiP2pChannel, object : WifiP2pManager.ActionListener {
             //断开一个connecting的连接，即断开当前状态是Invited的连接
             override fun onFailure(reasonCode: Int) {
+                clearLog()
                 log("cancelConnect onFailure:$reasonCode")
             }
 
             override fun onSuccess() {
+                clearLog()
                 log("断开连接（cancelConnect onSuccess）")
                 tvConnectionStatus.text = null  //显示连接状态为未连接
                 btnDisconnect.isEnabled = false //按钮不使能

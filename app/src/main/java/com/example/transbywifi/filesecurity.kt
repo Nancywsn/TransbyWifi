@@ -29,11 +29,9 @@ object FileDesUtil {
      */
     fun encrypt(fromFilePath: String, toFilePath: String) {
         Logger.log("encrypting")
- //       println("encrypting")
         val fromFile = File(fromFilePath)
         if (!fromFile.exists()) {
             Logger.log("to be encrypt file no exist!")
- //           println("to be encrypt file no exist!")
             return
         }
         val toFile: File = getFile(toFilePath)
@@ -138,19 +136,3 @@ object FileDesUtil {
     }
 }
 
-//@RequiresApi(Build.VERSION_CODES.O)
-//fun main(args: Array<String>) {
-//
-//    val rpath="D:/project_all/keshe/fromOthers/devide/testDES/oring.txt"
-//    val path="D:/project_all/keshe/fromOthers/devide/testDES/to.txt"
-//    val decode="D:/project_all/keshe/fromOthers/devide/testDES/decode.txt"
-////    val path:String = System.getProperty("user.dir")
-////    val path = Paths.get("").toAbsolutePath().toString()+"/0.txt"
-//
-//    println("Working Directory = $path")
-//    println("Working Directory = $rpath")
-//
-//    encrypt(rpath, path)
-//    decrypt(path,decode)
-//
-//}
