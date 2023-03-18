@@ -1,48 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/myColorDark"
-        android:textSize="40sp"
-        android:text=" "/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/myColorDark"
-        android:textSize="60sp"
-        android:text="使用说明"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/myColorDark"
-        android:textSize="40sp"
-        android:text=" "/>
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="330dp"
+            app:srcCompat="@drawable/interact" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:textColor="@color/black"
-        android:textSize="40dp"
-        android:text="第一步："/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/black"
-        android:textSize="30dp"
-        android:text="    第一次使用将检查权限，请开启GPS、WiFi相关权限"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/myColorDark"
+            android:textSize="50sp"
+            android:text="使用说明"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text=" "
+            android:textColor="@color/myColorDark"
+            android:textSize="40sp"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:layout_margin="5dp"
+            android:text="第一步："/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="    第一次使用将检查权限，请开启GPS、WiFi相关权限。"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:layout_margin="5dp"
+            android:text="第二步："/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="    选择作为组长或者组员进入。组长可以同时一对多发送文件给组员；组员可以多对一发送文件给组长。"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:layout_margin="5dp"
+            android:text="第三步："/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="    组长先建立连接，组员搜索设备搜索到组长，点击目标设备进行连接，等待直到连接成功"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:layout_margin="5dp"
+            android:text="一对多："/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="    组长需点击接收IP，待组员发送IP。重复这个过程直至收集所有组员IP后，组长选择文件，点击发送。"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:layout_margin="5dp"
+            android:text="多对一："/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="    组长需点击接收文件，待组员发送文件。重复这个过程直至所有组员完成发送。"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,4 +119,6 @@
         android:src="@drawable/ic_back"
         tools:ignore="SpeakableTextPresentCheck"/>
 
-</LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
