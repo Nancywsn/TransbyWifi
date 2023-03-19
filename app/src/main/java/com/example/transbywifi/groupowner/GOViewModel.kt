@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import androidx.annotation.RequiresApi
 import androidx.core.net.toFile
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.transbywifi.AESCrypt
 import com.example.transbywifi.Constants
 import com.example.transbywifi.FileDesUtil
 import com.example.transbywifi.FileDesUtil.decrypt
@@ -45,7 +48,8 @@ class FileReceiverViewModel(context: Application) :
 
     private var job: Job? = null
 
-    fun receiveip(devicenamelist: MutableSet<String>,iplist: MutableSet<String>) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun receiveip(devicenamelist: MutableSet<String>, iplist: MutableSet<String>) {
 
         if (job != null) {
             return
@@ -81,9 +85,12 @@ class FileReceiverViewModel(context: Application) :
                 }
                 log("接收到ip信息: $sb")
 
-                var index=sb.indexOf("0a")
-                devicenamelist.add(sb.substring(0,index))
-                iplist.add(sb.substring(index+2))
+                val aesip=AESCrypt.AESdecrypt(sb.toString())
+                log("ip信息解码后: $aesip")
+
+                var index=aesip.indexOf("  ")
+                devicenamelist.add(aesip.substring(0,index))
+                iplist.add(aesip.substring(index+2))
                 _text.emit(devicenamelist.toString())
 
                 log("组员名字: $devicenamelist")

@@ -8,9 +8,11 @@ import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
@@ -32,6 +34,7 @@ class FileSenderActivity : BaseActivity() {
         initEvent()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingPermission")
     private fun initView() {
         supportActionBar?.title = "P2P Client"   //标题栏文字
@@ -47,7 +50,7 @@ class FileSenderActivity : BaseActivity() {
         }
         btnsendip.setOnClickListener{
             val ipAddress = wifiP2pInfo?.groupOwnerAddress?.hostAddress     //群主的IP地址
-            val sendmessage=devicename+"0a"+getIpAddress()!!
+            val sendmessage=devicename+"  "+getIpAddress()!!
             log("将发送：$sendmessage")
             //发送本机IP地址
             if (ipAddress != null) {

@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import androidx.annotation.RequiresApi
 import androidx.core.net.toFile
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.transbywifi.AESCrypt
 import com.example.transbywifi.Constants
 import com.example.transbywifi.FileDesUtil
 import com.example.transbywifi.FileDesUtil.encrypt
@@ -48,7 +51,8 @@ class FileSenderViewModel(context: Application) :
     private var job: Job? = null
 
 
-    fun sendip(ipAddress: String,ipsent:String){
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun sendip(ipAddress: String, ipsent:String){
 
         if (job != null) {
             return
@@ -65,6 +69,9 @@ class FileSenderViewModel(context: Application) :
                     _log.emit(value = "待发送的本机信息: $ipsent")
                     _log.emit(value = "开启 Socket")
 
+                    val aesip=AESCrypt.AESencrypt(ipsent)
+                    _log.emit(value = "本机信息AES编码: $aesip")
+
                     socket = Socket()   //创建
                     socket.bind(null)   //初始化绑定
 
@@ -76,7 +83,7 @@ class FileSenderViewModel(context: Application) :
                     _log.emit(value = "连接成功，开始传输文件")
 
                     outputStream = socket.getOutputStream() //socket输出流
-                    outputStream.write(ipsent.toByteArray(charset("UTF-8")))
+                    outputStream.write(aesip.toByteArray(charset("UTF-8")))
 
                     _log.emit(value = "文件发送成功")
 
