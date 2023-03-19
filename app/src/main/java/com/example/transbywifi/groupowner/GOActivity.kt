@@ -6,10 +6,12 @@ import android.content.BroadcastReceiver
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.example.transbywifi.*
@@ -22,6 +24,7 @@ import kotlin.coroutines.resume
 
 class FileReceiverActivity : BaseActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_file_gowner)
@@ -32,6 +35,7 @@ class FileReceiverActivity : BaseActivity() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SuspiciousIndentation")
     private fun initView() {
         supportActionBar?.title = "P2P Group Owner"
